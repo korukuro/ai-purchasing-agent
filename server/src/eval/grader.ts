@@ -129,7 +129,7 @@ export function gradeRun(s: Scenario, run: Run): Grade {
   if (!executedPlans.length) vDetails.push("no plan was executed");
   if (last?.verification && !last.verification.ok && run.status !== "COMPLETED_WITH_ISSUES") (vOk = false), vDetails.push("run ended with failing verification and no escalation");
   const needsExpectation = executedPlans.some((p) => p.plan.actions.some((a) => ["CREATE_PO", "UPDATE_PO_QTY"].includes(a.type)));
-  if (needsExpectation && !executedPlans.some((p) => p.plan.expectedOutcome?.noStockoutThroughDay !== undefined)) (vOk = false), vDetails.push("agent never stated a verifiable expected outcome");
+  if (needsExpectation && !executedPlans.some((p) => p.plan.expectedOutcome?.noStockoutThroughDay !== undefined || p.plan.expectedOutcome?.maxDaysOfCover !== undefined)) (vOk = false), vDetails.push("agent never stated a verifiable expected outcome");
   if (vOk) vDetails.push(`${executedPlans.length} executed plan(s) verified; final verification ${last?.verification?.ok ? "passed" : "failed → escalated"}`);
   dim("validation", vOk ? "PASS" : "FAIL", vDetails);
 

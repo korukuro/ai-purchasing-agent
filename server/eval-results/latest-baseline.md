@@ -1,6 +1,6 @@
 # Evaluation report — baseline:blind-executor
 
-Run 2026-09-27T14:08:28.410Z · 12 run(s) over 12 scenario(s) · 1 trial(s) each
+Run 2026-09-27T14:18:59.941Z · 12 run(s) over 12 scenario(s) · 1 trial(s) each
 
 **Pass rate: 0%** · average dimension score 36% · avg 2 LLM calls / 0 tool calls per run
 
@@ -45,7 +45,7 @@ Run 2026-09-27T14:08:28.410Z · 12 run(s) over 12 scenario(s) · 1 trial(s) each
 - **s2-alternate-supplier** · Did it explain the important factors? — rationale never mentions any of: stockout, stock-out, stock out, run out, cover
 - **s2-inventory-sufficient** · Did it obtain the necessary information? — never checked what the supplier actually said (get_supplier_messages | get_purchase_order); never checked current on-hand stock (get_inventory_position | calculate_requirement | simulate_plan); never checked actual sales vs forecast (get_demand_signals)
 - **s2-inventory-sufficient** · Did it explain the important factors? — no key factors given
-- **s2-no-good-alternative** · Was the decision correct? — final decision ACCEPT; acceptable: ESCALATE
+- **s2-no-good-alternative** · Was the decision correct? — final decision ACCEPT; acceptable: ESCALATE / MODIFY
 - **s2-no-good-alternative** · Did it obtain the necessary information? — never checked what the supplier actually said (get_supplier_messages | get_purchase_order); never checked current on-hand stock (get_inventory_position | calculate_requirement | simulate_plan); never checked supplier MOQ / lead time / alternates (get_supplier_options)
 - **s2-no-good-alternative** · Did it take the appropriate action? — net new units 0 within [0, 400]; missing required action ESCALATE; should have escalated to the buyer
 - **s2-no-good-alternative** · Did it explain the important factors? — no key factors given

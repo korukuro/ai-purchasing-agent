@@ -1,12 +1,12 @@
 {
   "agent": "baseline:blind-executor",
-  "startedAt": "2026-09-27T14:08:28.410Z",
-  "finishedAt": "2026-09-27T14:08:28.451Z",
+  "startedAt": "2026-09-27T14:18:59.941Z",
+  "finishedAt": "2026-09-27T14:18:59.975Z",
   "trials": 1,
   "grades": [
     {
       "scenarioId": "s1-accept",
-      "runId": "run-mujw92ij-1",
+      "runId": "run-mujwmlt2-1",
       "agent": "baseline:blind-executor",
       "runStatus": "COMPLETED",
       "finalDecision": "ACCEPT",
@@ -82,12 +82,12 @@
         "outputTokens": 0,
         "guardrailRejections": 0,
         "replans": 0,
-        "durationMs": 25
+        "durationMs": 22
       }
     },
     {
       "scenarioId": "s1-open-po",
-      "runId": "run-mujw92j9-2",
+      "runId": "run-mujwmltp-2",
       "agent": "baseline:blind-executor",
       "runStatus": "ESCALATED",
       "finalDecision": "NONE",
@@ -169,7 +169,7 @@
     },
     {
       "scenarioId": "s1-reject",
-      "runId": "run-mujw92jb-3",
+      "runId": "run-mujwmltq-3",
       "agent": "baseline:blind-executor",
       "runStatus": "ESCALATED",
       "finalDecision": "NONE",
@@ -250,7 +250,7 @@
     },
     {
       "scenarioId": "s1-forecast-anomaly",
-      "runId": "run-mujw92jc-4",
+      "runId": "run-mujwmlts-4",
       "agent": "baseline:blind-executor",
       "runStatus": "COMPLETED",
       "finalDecision": "ACCEPT",
@@ -324,12 +324,12 @@
         "outputTokens": 0,
         "guardrailRejections": 0,
         "replans": 0,
-        "durationMs": 1
+        "durationMs": 0
       }
     },
     {
       "scenarioId": "s2-alternate-supplier",
-      "runId": "run-mujw92jd-5",
+      "runId": "run-mujwmlts-5",
       "agent": "baseline:blind-executor",
       "runStatus": "COMPLETED",
       "finalDecision": "ACCEPT",
@@ -406,12 +406,12 @@
         "outputTokens": 0,
         "guardrailRejections": 0,
         "replans": 0,
-        "durationMs": 1
+        "durationMs": 0
       }
     },
     {
       "scenarioId": "s2-inventory-sufficient",
-      "runId": "run-mujw92je-6",
+      "runId": "run-mujwmltt-6",
       "agent": "baseline:blind-executor",
       "runStatus": "COMPLETED",
       "finalDecision": "ACCEPT",
@@ -486,12 +486,12 @@
         "outputTokens": 0,
         "guardrailRejections": 0,
         "replans": 0,
-        "durationMs": 1
+        "durationMs": 0
       }
     },
     {
       "scenarioId": "s2-no-good-alternative",
-      "runId": "run-mujw92jf-7",
+      "runId": "run-mujwmltu-7",
       "agent": "baseline:blind-executor",
       "runStatus": "COMPLETED",
       "finalDecision": "ACCEPT",
@@ -504,7 +504,7 @@
           "label": "Was the decision correct?",
           "status": "FAIL",
           "details": [
-            "final decision ACCEPT; acceptable: ESCALATE"
+            "final decision ACCEPT; acceptable: ESCALATE / MODIFY"
           ]
         },
         {
@@ -567,12 +567,12 @@
         "outputTokens": 0,
         "guardrailRejections": 0,
         "replans": 0,
-        "durationMs": 0
+        "durationMs": 1
       }
     },
     {
       "scenarioId": "s2-feedback-loop",
-      "runId": "run-mujw92jg-8",
+      "runId": "run-mujwmltv-8",
       "agent": "baseline:blind-executor",
       "runStatus": "COMPLETED",
       "finalDecision": "ACCEPT",
@@ -653,7 +653,7 @@
     },
     {
       "scenarioId": "s3-sustained-spike",
-      "runId": "run-mujw92jh-9",
+      "runId": "run-mujwmltw-9",
       "agent": "baseline:blind-executor",
       "runStatus": "COMPLETED",
       "finalDecision": "NO_CHANGE",
@@ -733,7 +733,7 @@
     },
     {
       "scenarioId": "s3-promo-spike",
-      "runId": "run-mujw92ji-a",
+      "runId": "run-mujwmltx-a",
       "agent": "baseline:blind-executor",
       "runStatus": "COMPLETED",
       "finalDecision": "NO_CHANGE",
@@ -812,7 +812,7 @@
     },
     {
       "scenarioId": "s4-budget",
-      "runId": "run-mujw92jj-b",
+      "runId": "run-mujwmlty-b",
       "agent": "baseline:blind-executor",
       "runStatus": "ESCALATED",
       "finalDecision": "NONE",
@@ -889,12 +889,12 @@
         "outputTokens": 0,
         "guardrailRejections": 1,
         "replans": 0,
-        "durationMs": 3
+        "durationMs": 0
       }
     },
     {
       "scenarioId": "s4-storage",
-      "runId": "run-mujw92jn-c",
+      "runId": "run-mujwmltz-c",
       "agent": "baseline:blind-executor",
       "runStatus": "ESCALATED",
       "finalDecision": "NONE",

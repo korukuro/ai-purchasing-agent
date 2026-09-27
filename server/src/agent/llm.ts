@@ -72,10 +72,10 @@ export class GeminiClient implements LLMClient {
   private ai: GoogleGenAI;
   private limiter: RateLimiter;
 
-  constructor(apiKey = config.geminiApiKey, private model = config.geminiModel) {
+  constructor(apiKey = config.geminiApiKey, private model = config.geminiModel, rpm = config.llmRpm) {
     if (!apiKey) throw new Error("GEMINI_API_KEY is not set. Copy .env.example to .env and add your key.");
     this.ai = new GoogleGenAI({ apiKey });
-    this.limiter = new RateLimiter(config.llmRpm);
+    this.limiter = new RateLimiter(rpm);
     this.name = `gemini:${model}`;
   }
 

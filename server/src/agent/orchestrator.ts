@@ -100,7 +100,9 @@ export async function runAgent(
       run.metrics.llmCalls++;
       run.metrics.inputTokens += turn.usage?.inputTokens ?? 0;
       run.metrics.outputTokens += turn.usage?.outputTokens ?? 0;
-      history.push({ role: "model", text: turn.text, calls: turn.calls, raw: turn.raw });
+      // Never send an empty model turn back to the API (e.g. after a malformed function call).
+      const empty = !turn.text && !turn.calls.length;
+      history.push({ role: "model", text: empty ? "(no output)" : turn.text, calls: turn.calls, raw: empty ? undefined : turn.raw });
       if (turn.text) store.emit(run, "llm", turn.text.slice(0, 200), { text: turn.text });
 
       if (!turn.calls.length) {

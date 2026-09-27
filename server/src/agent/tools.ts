@@ -258,7 +258,7 @@ export const TOOLS: ToolDef[] = [
           ),
         },
         expectedOutcome: obj({
-          noStockoutThroughDay: numb("the plan should prevent any stockout through this day (under your demandAssumption); used to verify the result"),
+          noStockoutThroughDay: numb("the plan should prevent any stockout through this day (under your demandAssumption); used to verify the result. Omit it if a stockout is unavoidable (e.g. before any delivery can arrive) and give maxDaysOfCover instead"),
           maxDaysOfCover: numb("upper bound on days of cover you expect"),
           notes: str("anything else you expect"),
         }),

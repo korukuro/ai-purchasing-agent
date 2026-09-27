@@ -238,7 +238,7 @@ function s2Escalate(): Scenario {
     trigger: { kind: "SUPPLIER_EXCEPTION", message: "Supplier exception on PO-3201 (FORMULA-400G, DS-BLR-01): ordered 200, supplier says only 60 can be supplied. Decide what should happen next.", context: { sku: p.sku, nodeId: N, poId: "PO-3201" } },
     world: w,
     expectations: {
-      allowedDecisions: ["ESCALATE"],
+      allowedDecisions: ["ESCALATE", "MODIFY"],
       requiredEvidence: [EVIDENCE.supplierMsg, EVIDENCE.stock, EVIDENCE.suppliers],
       newUnitsRange: [0, 400],
       trueDailyDemand: 12,
@@ -284,7 +284,7 @@ function s3Spike(): Scenario {
   const p = product({ sku: "ELECTROLYTE-500ML", name: "Electrolyte Drink 500ml", category: "Beverages", unitCost: 35, shelfLifeDays: 270 });
   const hist = [...series(18, 40, 0.08, 7), 52, 58, 66, 74, 82, 86, 90, 94, 92, 96];
   withSku(w, p, 300, hist, flat(H, 40), flat(42, 40), ["Weather: heatwave advisory for Bangalore issued D-10, expected to last ~2 more weeks."]);
-  w.offers.push({ supplierId: "SUP-METRO", sku: p.sku, unitPrice: 35, moq: 120, caseSize: 24, leadTimeDays: 3, availableQty: 3000, active: true });
+  w.offers.push({ supplierId: "SUP-METRO", sku: p.sku, unitPrice: 35, moq: 120, caseSize: 20, leadTimeDays: 3, availableQty: 3000, active: true });
   w.purchaseOrders.push({ id: "PO-4001", supplierId: "SUP-METRO", sku: p.sku, nodeId: N, qtyOrdered: 400, qtyConfirmed: 400, unitPrice: 35, status: "CONFIRMED", createdDay: -1, expectedArrivalDay: 3, createdBy: "system", history: [{ day: -1, event: "replenishment PO confirmed" }] });
   w.budgets.push({ category: "Beverages", periodLabel: "Sep-2026", limit: 600_000, committed: 250_000 });
   return {

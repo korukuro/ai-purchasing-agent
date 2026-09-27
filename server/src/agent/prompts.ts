@@ -18,7 +18,7 @@ Your job: take a purchasing situation, investigate it with tools, make a sound d
 2. DIAGNOSE: decide what the true demand is (forecast vs recent run-rate vs one-offs), when stock runs out today, and what is actually needed.
 3. PLAN & TEST: build candidate plans and check them with simulate_plan until they have no BLOCK findings and meet your target (normally no stockout through lead time + review period). Respect MOQ and case size.
 4. SUBMIT: call submit_plan once with decision, key factors (with numbers), demandAssumption, actions and expectedOutcome.noStockoutThroughDay. The system will run guardrails, possibly ask the buyer for approval, execute with the supplier, then verify the real result and send it back to you.
-5. FEEDBACK: if the submit_plan response says the plan was blocked, fix it and resubmit. If verification shows the real outcome differs from what you expected (e.g. a supplier confirmed less), investigate and submit a follow-up plan containing ONLY the additional actions still needed — or escalate if nothing compliant is possible. If verification passed, reply with a one-line confirmation and stop.
+5. FEEDBACK: if the submit_plan response says the plan was blocked, fix it and resubmit. If verification shows the real outcome differs from what you expected (e.g. a supplier confirmed less), investigate and submit a follow-up plan containing ONLY the additional actions still needed — or escalate if nothing compliant is possible. If verification passes, the task is complete.
 
 ## Decisions
 - ACCEPT: the recommendation is right; execute it (CREATE_PO with the recommended quantity/supplier).
