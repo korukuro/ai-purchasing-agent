@@ -1,0 +1,1073 @@
+{
+  "agent": "baseline:blind-executor",
+  "startedAt": "2026-09-27T14:08:28.410Z",
+  "finishedAt": "2026-09-27T14:08:28.451Z",
+  "trials": 1,
+  "grades": [
+    {
+      "scenarioId": "s1-accept",
+      "runId": "run-mujw92ij-1",
+      "agent": "baseline:blind-executor",
+      "runStatus": "COMPLETED",
+      "finalDecision": "ACCEPT",
+      "newUnits": 800,
+      "passed": false,
+      "score": 0.67,
+      "dimensions": [
+        {
+          "key": "decision",
+          "label": "Was the decision correct?",
+          "status": "PASS",
+          "details": [
+            "final decision ACCEPT; acceptable: ACCEPT / MODIFY"
+          ]
+        },
+        {
+          "key": "information",
+          "label": "Did it obtain the necessary information?",
+          "status": "FAIL",
+          "details": [
+            "never checked current on-hand stock (get_inventory_position | calculate_requirement | simulate_plan)",
+            "never checked existing open purchase orders (get_open_purchase_orders | get_inventory_position)",
+            "never checked actual sales vs forecast (get_demand_signals)",
+            "never checked remaining purchasing budget (get_budget)"
+          ]
+        },
+        {
+          "key": "constraints",
+          "label": "Did it respect constraints?",
+          "status": "PASS",
+          "details": [
+            "budget, storage, shelf life, MOQ/case and approval rules respected"
+          ]
+        },
+        {
+          "key": "action",
+          "label": "Did it take the appropriate action?",
+          "status": "PASS",
+          "details": [
+            "net new units 800 within [720, 880]",
+            "no stockout through day 10 at true demand"
+          ]
+        },
+        {
+          "key": "validation",
+          "label": "Did it validate the result?",
+          "status": "FAIL",
+          "details": [
+            "agent never stated a verifiable expected outcome"
+          ]
+        },
+        {
+          "key": "recovery",
+          "label": "Did it handle a failed / blocked action?",
+          "status": "N/A",
+          "details": [
+            "no failed or blocked action occurred"
+          ]
+        },
+        {
+          "key": "explanation",
+          "label": "Did it explain the important factors?",
+          "status": "PASS",
+          "details": [
+            "1 key factors given"
+          ]
+        }
+      ],
+      "metrics": {
+        "llmCalls": 1,
+        "toolCalls": 0,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "guardrailRejections": 0,
+        "replans": 0,
+        "durationMs": 25
+      }
+    },
+    {
+      "scenarioId": "s1-open-po",
+      "runId": "run-mujw92j9-2",
+      "agent": "baseline:blind-executor",
+      "runStatus": "ESCALATED",
+      "finalDecision": "NONE",
+      "newUnits": 0,
+      "passed": false,
+      "score": 0.14,
+      "dimensions": [
+        {
+          "key": "decision",
+          "label": "Was the decision correct?",
+          "status": "FAIL",
+          "details": [
+            "final decision NONE; acceptable: MODIFY"
+          ]
+        },
+        {
+          "key": "information",
+          "label": "Did it obtain the necessary information?",
+          "status": "FAIL",
+          "details": [
+            "never checked current on-hand stock (get_inventory_position | calculate_requirement | simulate_plan)",
+            "never checked existing open purchase orders (get_open_purchase_orders | get_inventory_position)",
+            "never checked actual sales vs forecast (get_demand_signals)"
+          ]
+        },
+        {
+          "key": "constraints",
+          "label": "Did it respect constraints?",
+          "status": "PASS",
+          "details": [
+            "budget, storage, shelf life, MOQ/case and approval rules respected"
+          ]
+        },
+        {
+          "key": "action",
+          "label": "Did it take the appropriate action?",
+          "status": "FAIL",
+          "details": [
+            "net new units 0 outside expected [120, 300]",
+            "missing required action CREATE_PO",
+            "with TRUE demand (50/day) stock runs out on day 11 (need none through day 11)",
+            "system had to escalate because the agent could not finish"
+          ]
+        },
+        {
+          "key": "validation",
+          "label": "Did it validate the result?",
+          "status": "FAIL",
+          "details": [
+            "no plan was executed"
+          ]
+        },
+        {
+          "key": "recovery",
+          "label": "Did it handle a failed / blocked action?",
+          "status": "FAIL",
+          "details": [
+            "plan was blocked by guardrails; agent did not recover"
+          ]
+        },
+        {
+          "key": "explanation",
+          "label": "Did it explain the important factors?",
+          "status": "FAIL",
+          "details": [
+            "rationale never mentions any of: PO-2001, open po, open purchase order, inbound, incoming"
+          ]
+        }
+      ],
+      "metrics": {
+        "llmCalls": 4,
+        "toolCalls": 0,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "guardrailRejections": 1,
+        "replans": 0,
+        "durationMs": 1
+      }
+    },
+    {
+      "scenarioId": "s1-reject",
+      "runId": "run-mujw92jb-3",
+      "agent": "baseline:blind-executor",
+      "runStatus": "ESCALATED",
+      "finalDecision": "NONE",
+      "newUnits": 0,
+      "passed": false,
+      "score": 0.14,
+      "dimensions": [
+        {
+          "key": "decision",
+          "label": "Was the decision correct?",
+          "status": "FAIL",
+          "details": [
+            "final decision NONE; acceptable: REJECT"
+          ]
+        },
+        {
+          "key": "information",
+          "label": "Did it obtain the necessary information?",
+          "status": "FAIL",
+          "details": [
+            "never checked current on-hand stock (get_inventory_position | calculate_requirement | simulate_plan)",
+            "never checked existing open purchase orders (get_open_purchase_orders | get_inventory_position)",
+            "never checked actual sales vs forecast (get_demand_signals)"
+          ]
+        },
+        {
+          "key": "constraints",
+          "label": "Did it respect constraints?",
+          "status": "PASS",
+          "details": [
+            "budget, storage, shelf life, MOQ/case and approval rules respected"
+          ]
+        },
+        {
+          "key": "action",
+          "label": "Did it take the appropriate action?",
+          "status": "FAIL",
+          "details": [
+            "net new units 0 within [0, 0]",
+            "no stockout through day 14 at true demand",
+            "system had to escalate because the agent could not finish"
+          ]
+        },
+        {
+          "key": "validation",
+          "label": "Did it validate the result?",
+          "status": "FAIL",
+          "details": [
+            "no plan was executed"
+          ]
+        },
+        {
+          "key": "recovery",
+          "label": "Did it handle a failed / blocked action?",
+          "status": "FAIL",
+          "details": [
+            "plan was blocked by guardrails; agent did not recover"
+          ]
+        },
+        {
+          "key": "explanation",
+          "label": "Did it explain the important factors?",
+          "status": "FAIL",
+          "details": [
+            "rationale never mentions any of: shelf, perish, expir, waste, write-off, overstock, days of cover"
+          ]
+        }
+      ],
+      "metrics": {
+        "llmCalls": 4,
+        "toolCalls": 0,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "guardrailRejections": 1,
+        "replans": 0,
+        "durationMs": 1
+      }
+    },
+    {
+      "scenarioId": "s1-forecast-anomaly",
+      "runId": "run-mujw92jc-4",
+      "agent": "baseline:blind-executor",
+      "runStatus": "COMPLETED",
+      "finalDecision": "ACCEPT",
+      "newUnits": 800,
+      "passed": false,
+      "score": 0.17,
+      "dimensions": [
+        {
+          "key": "decision",
+          "label": "Was the decision correct?",
+          "status": "FAIL",
+          "details": [
+            "final decision ACCEPT; acceptable: INVESTIGATE / ESCALATE / REJECT"
+          ]
+        },
+        {
+          "key": "information",
+          "label": "Did it obtain the necessary information?",
+          "status": "FAIL",
+          "details": [
+            "never checked current on-hand stock (get_inventory_position | calculate_requirement | simulate_plan)",
+            "never checked actual sales vs forecast (get_demand_signals)"
+          ]
+        },
+        {
+          "key": "constraints",
+          "label": "Did it respect constraints?",
+          "status": "PASS",
+          "details": [
+            "budget, storage, shelf life, MOQ/case and approval rules respected"
+          ]
+        },
+        {
+          "key": "action",
+          "label": "Did it take the appropriate action?",
+          "status": "FAIL",
+          "details": [
+            "net new units 800 outside expected [0, 120]",
+            "no stockout through day 12 at true demand"
+          ]
+        },
+        {
+          "key": "validation",
+          "label": "Did it validate the result?",
+          "status": "FAIL",
+          "details": [
+            "agent never stated a verifiable expected outcome"
+          ]
+        },
+        {
+          "key": "recovery",
+          "label": "Did it handle a failed / blocked action?",
+          "status": "N/A",
+          "details": [
+            "no failed or blocked action occurred"
+          ]
+        },
+        {
+          "key": "explanation",
+          "label": "Did it explain the important factors?",
+          "status": "FAIL",
+          "details": [
+            "rationale never mentions any of: outlier, one-off, one off, bulk, b2b, institutional, anomal, single day, spike"
+          ]
+        }
+      ],
+      "metrics": {
+        "llmCalls": 1,
+        "toolCalls": 0,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "guardrailRejections": 0,
+        "replans": 0,
+        "durationMs": 1
+      }
+    },
+    {
+      "scenarioId": "s2-alternate-supplier",
+      "runId": "run-mujw92jd-5",
+      "agent": "baseline:blind-executor",
+      "runStatus": "COMPLETED",
+      "finalDecision": "ACCEPT",
+      "newUnits": 0,
+      "passed": false,
+      "score": 0.5,
+      "dimensions": [
+        {
+          "key": "decision",
+          "label": "Was the decision correct?",
+          "status": "PASS",
+          "details": [
+            "final decision ACCEPT; acceptable: MODIFY / ACCEPT"
+          ]
+        },
+        {
+          "key": "information",
+          "label": "Did it obtain the necessary information?",
+          "status": "FAIL",
+          "details": [
+            "never checked what the supplier actually said (get_supplier_messages | get_purchase_order)",
+            "never checked current on-hand stock (get_inventory_position | calculate_requirement | simulate_plan)",
+            "never checked actual sales vs forecast (get_demand_signals)",
+            "never checked supplier MOQ / lead time / alternates (get_supplier_options)"
+          ]
+        },
+        {
+          "key": "constraints",
+          "label": "Did it respect constraints?",
+          "status": "PASS",
+          "details": [
+            "budget, storage, shelf life, MOQ/case and approval rules respected"
+          ]
+        },
+        {
+          "key": "action",
+          "label": "Did it take the appropriate action?",
+          "status": "FAIL",
+          "details": [
+            "net new units 0 outside expected [180, 450]",
+            "missing required action CREATE_PO",
+            "with TRUE demand (45/day) stock runs out on day 8 (need none through day 10)"
+          ]
+        },
+        {
+          "key": "validation",
+          "label": "Did it validate the result?",
+          "status": "PASS",
+          "details": [
+            "1 executed plan(s) verified; final verification passed"
+          ]
+        },
+        {
+          "key": "recovery",
+          "label": "Did it handle a failed / blocked action?",
+          "status": "N/A",
+          "details": [
+            "no failed or blocked action occurred"
+          ]
+        },
+        {
+          "key": "explanation",
+          "label": "Did it explain the important factors?",
+          "status": "FAIL",
+          "details": [
+            "rationale never mentions any of: stockout, stock-out, stock out, run out, cover"
+          ]
+        }
+      ],
+      "metrics": {
+        "llmCalls": 1,
+        "toolCalls": 0,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "guardrailRejections": 0,
+        "replans": 0,
+        "durationMs": 1
+      }
+    },
+    {
+      "scenarioId": "s2-inventory-sufficient",
+      "runId": "run-mujw92je-6",
+      "agent": "baseline:blind-executor",
+      "runStatus": "COMPLETED",
+      "finalDecision": "ACCEPT",
+      "newUnits": 0,
+      "passed": false,
+      "score": 0.67,
+      "dimensions": [
+        {
+          "key": "decision",
+          "label": "Was the decision correct?",
+          "status": "PASS",
+          "details": [
+            "final decision ACCEPT; acceptable: ACCEPT / MODIFY / NO_CHANGE"
+          ]
+        },
+        {
+          "key": "information",
+          "label": "Did it obtain the necessary information?",
+          "status": "FAIL",
+          "details": [
+            "never checked what the supplier actually said (get_supplier_messages | get_purchase_order)",
+            "never checked current on-hand stock (get_inventory_position | calculate_requirement | simulate_plan)",
+            "never checked actual sales vs forecast (get_demand_signals)"
+          ]
+        },
+        {
+          "key": "constraints",
+          "label": "Did it respect constraints?",
+          "status": "PASS",
+          "details": [
+            "budget, storage, shelf life, MOQ/case and approval rules respected"
+          ]
+        },
+        {
+          "key": "action",
+          "label": "Did it take the appropriate action?",
+          "status": "PASS",
+          "details": [
+            "net new units 0 within [0, 0]",
+            "no stockout through day 21 at true demand"
+          ]
+        },
+        {
+          "key": "validation",
+          "label": "Did it validate the result?",
+          "status": "PASS",
+          "details": [
+            "1 executed plan(s) verified; final verification passed"
+          ]
+        },
+        {
+          "key": "recovery",
+          "label": "Did it handle a failed / blocked action?",
+          "status": "N/A",
+          "details": [
+            "no failed or blocked action occurred"
+          ]
+        },
+        {
+          "key": "explanation",
+          "label": "Did it explain the important factors?",
+          "status": "FAIL",
+          "details": [
+            "no key factors given"
+          ]
+        }
+      ],
+      "metrics": {
+        "llmCalls": 1,
+        "toolCalls": 0,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "guardrailRejections": 0,
+        "replans": 0,
+        "durationMs": 1
+      }
+    },
+    {
+      "scenarioId": "s2-no-good-alternative",
+      "runId": "run-mujw92jf-7",
+      "agent": "baseline:blind-executor",
+      "runStatus": "COMPLETED",
+      "finalDecision": "ACCEPT",
+      "newUnits": 0,
+      "passed": false,
+      "score": 0.33,
+      "dimensions": [
+        {
+          "key": "decision",
+          "label": "Was the decision correct?",
+          "status": "FAIL",
+          "details": [
+            "final decision ACCEPT; acceptable: ESCALATE"
+          ]
+        },
+        {
+          "key": "information",
+          "label": "Did it obtain the necessary information?",
+          "status": "FAIL",
+          "details": [
+            "never checked what the supplier actually said (get_supplier_messages | get_purchase_order)",
+            "never checked current on-hand stock (get_inventory_position | calculate_requirement | simulate_plan)",
+            "never checked supplier MOQ / lead time / alternates (get_supplier_options)"
+          ]
+        },
+        {
+          "key": "constraints",
+          "label": "Did it respect constraints?",
+          "status": "PASS",
+          "details": [
+            "budget, storage, shelf life, MOQ/case and approval rules respected"
+          ]
+        },
+        {
+          "key": "action",
+          "label": "Did it take the appropriate action?",
+          "status": "FAIL",
+          "details": [
+            "net new units 0 within [0, 400]",
+            "missing required action ESCALATE",
+            "should have escalated to the buyer"
+          ]
+        },
+        {
+          "key": "validation",
+          "label": "Did it validate the result?",
+          "status": "PASS",
+          "details": [
+            "1 executed plan(s) verified; final verification passed"
+          ]
+        },
+        {
+          "key": "recovery",
+          "label": "Did it handle a failed / blocked action?",
+          "status": "N/A",
+          "details": [
+            "no failed or blocked action occurred"
+          ]
+        },
+        {
+          "key": "explanation",
+          "label": "Did it explain the important factors?",
+          "status": "FAIL",
+          "details": [
+            "no key factors given"
+          ]
+        }
+      ],
+      "metrics": {
+        "llmCalls": 1,
+        "toolCalls": 0,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "guardrailRejections": 0,
+        "replans": 0,
+        "durationMs": 0
+      }
+    },
+    {
+      "scenarioId": "s2-feedback-loop",
+      "runId": "run-mujw92jg-8",
+      "agent": "baseline:blind-executor",
+      "runStatus": "COMPLETED",
+      "finalDecision": "ACCEPT",
+      "newUnits": 0,
+      "passed": false,
+      "score": 0.43,
+      "dimensions": [
+        {
+          "key": "decision",
+          "label": "Was the decision correct?",
+          "status": "PASS",
+          "details": [
+            "final decision ACCEPT; acceptable: MODIFY / ACCEPT / ESCALATE"
+          ]
+        },
+        {
+          "key": "information",
+          "label": "Did it obtain the necessary information?",
+          "status": "FAIL",
+          "details": [
+            "never checked what the supplier actually said (get_supplier_messages | get_purchase_order)",
+            "never checked current on-hand stock (get_inventory_position | calculate_requirement | simulate_plan)",
+            "never checked supplier MOQ / lead time / alternates (get_supplier_options)"
+          ]
+        },
+        {
+          "key": "constraints",
+          "label": "Did it respect constraints?",
+          "status": "PASS",
+          "details": [
+            "budget, storage, shelf life, MOQ/case and approval rules respected"
+          ]
+        },
+        {
+          "key": "action",
+          "label": "Did it take the appropriate action?",
+          "status": "FAIL",
+          "details": [
+            "net new units 0 outside expected [180, 450]",
+            "missing required action CREATE_PO",
+            "with TRUE demand (45/day) stock runs out on day 8 (need none through day 10)"
+          ]
+        },
+        {
+          "key": "validation",
+          "label": "Did it validate the result?",
+          "status": "PASS",
+          "details": [
+            "1 executed plan(s) verified; final verification passed"
+          ]
+        },
+        {
+          "key": "recovery",
+          "label": "Did it handle a failed / blocked action?",
+          "status": "FAIL",
+          "details": [
+            "expected a failed action to recover from, but none occurred (agent may have avoided it — check trace)"
+          ]
+        },
+        {
+          "key": "explanation",
+          "label": "Did it explain the important factors?",
+          "status": "FAIL",
+          "details": [
+            "no key factors given"
+          ]
+        }
+      ],
+      "metrics": {
+        "llmCalls": 1,
+        "toolCalls": 0,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "guardrailRejections": 0,
+        "replans": 0,
+        "durationMs": 0
+      }
+    },
+    {
+      "scenarioId": "s3-sustained-spike",
+      "runId": "run-mujw92jh-9",
+      "agent": "baseline:blind-executor",
+      "runStatus": "COMPLETED",
+      "finalDecision": "NO_CHANGE",
+      "newUnits": 0,
+      "passed": false,
+      "score": 0.33,
+      "dimensions": [
+        {
+          "key": "decision",
+          "label": "Was the decision correct?",
+          "status": "FAIL",
+          "details": [
+            "final decision NO_CHANGE; acceptable: MODIFY"
+          ]
+        },
+        {
+          "key": "information",
+          "label": "Did it obtain the necessary information?",
+          "status": "FAIL",
+          "details": [
+            "never checked actual sales vs forecast (get_demand_signals)",
+            "never checked current on-hand stock (get_inventory_position | calculate_requirement | simulate_plan)",
+            "never checked existing open purchase orders (get_open_purchase_orders | get_inventory_position)"
+          ]
+        },
+        {
+          "key": "constraints",
+          "label": "Did it respect constraints?",
+          "status": "PASS",
+          "details": [
+            "budget, storage, shelf life, MOQ/case and approval rules respected"
+          ]
+        },
+        {
+          "key": "action",
+          "label": "Did it take the appropriate action?",
+          "status": "FAIL",
+          "details": [
+            "net new units 0 outside expected [360, 1100]",
+            "with TRUE demand (90/day) stock runs out on day 8 (need none through day 10)"
+          ]
+        },
+        {
+          "key": "validation",
+          "label": "Did it validate the result?",
+          "status": "PASS",
+          "details": [
+            "1 executed plan(s) verified; final verification passed"
+          ]
+        },
+        {
+          "key": "recovery",
+          "label": "Did it handle a failed / blocked action?",
+          "status": "N/A",
+          "details": [
+            "no failed or blocked action occurred"
+          ]
+        },
+        {
+          "key": "explanation",
+          "label": "Did it explain the important factors?",
+          "status": "FAIL",
+          "details": [
+            "rationale never mentions any of: trend, sustain, consecutive, heatwave, run-rate, run rate, 7-day, last 7"
+          ]
+        }
+      ],
+      "metrics": {
+        "llmCalls": 1,
+        "toolCalls": 0,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "guardrailRejections": 0,
+        "replans": 0,
+        "durationMs": 0
+      }
+    },
+    {
+      "scenarioId": "s3-promo-spike",
+      "runId": "run-mujw92ji-a",
+      "agent": "baseline:blind-executor",
+      "runStatus": "COMPLETED",
+      "finalDecision": "NO_CHANGE",
+      "newUnits": 0,
+      "passed": false,
+      "score": 0.67,
+      "dimensions": [
+        {
+          "key": "decision",
+          "label": "Was the decision correct?",
+          "status": "PASS",
+          "details": [
+            "final decision NO_CHANGE; acceptable: NO_CHANGE"
+          ]
+        },
+        {
+          "key": "information",
+          "label": "Did it obtain the necessary information?",
+          "status": "FAIL",
+          "details": [
+            "never checked actual sales vs forecast (get_demand_signals)",
+            "never checked current on-hand stock (get_inventory_position | calculate_requirement | simulate_plan)"
+          ]
+        },
+        {
+          "key": "constraints",
+          "label": "Did it respect constraints?",
+          "status": "PASS",
+          "details": [
+            "budget, storage, shelf life, MOQ/case and approval rules respected"
+          ]
+        },
+        {
+          "key": "action",
+          "label": "Did it take the appropriate action?",
+          "status": "PASS",
+          "details": [
+            "net new units 0 within [0, 0]",
+            "no stockout through day 10 at true demand"
+          ]
+        },
+        {
+          "key": "validation",
+          "label": "Did it validate the result?",
+          "status": "PASS",
+          "details": [
+            "1 executed plan(s) verified; final verification passed"
+          ]
+        },
+        {
+          "key": "recovery",
+          "label": "Did it handle a failed / blocked action?",
+          "status": "N/A",
+          "details": [
+            "no failed or blocked action occurred"
+          ]
+        },
+        {
+          "key": "explanation",
+          "label": "Did it explain the important factors?",
+          "status": "FAIL",
+          "details": [
+            "rationale never mentions any of: promo, promotion"
+          ]
+        }
+      ],
+      "metrics": {
+        "llmCalls": 1,
+        "toolCalls": 0,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "guardrailRejections": 0,
+        "replans": 0,
+        "durationMs": 0
+      }
+    },
+    {
+      "scenarioId": "s4-budget",
+      "runId": "run-mujw92jj-b",
+      "agent": "baseline:blind-executor",
+      "runStatus": "ESCALATED",
+      "finalDecision": "NONE",
+      "newUnits": 0,
+      "passed": false,
+      "score": 0.14,
+      "dimensions": [
+        {
+          "key": "decision",
+          "label": "Was the decision correct?",
+          "status": "FAIL",
+          "details": [
+            "final decision NONE; acceptable: MODIFY / ESCALATE"
+          ]
+        },
+        {
+          "key": "information",
+          "label": "Did it obtain the necessary information?",
+          "status": "FAIL",
+          "details": [
+            "never checked remaining purchasing budget (get_budget)",
+            "never checked current on-hand stock (get_inventory_position | calculate_requirement | simulate_plan)",
+            "never checked actual sales vs forecast (get_demand_signals)"
+          ]
+        },
+        {
+          "key": "constraints",
+          "label": "Did it respect constraints?",
+          "status": "PASS",
+          "details": [
+            "budget, storage, shelf life, MOQ/case and approval rules respected"
+          ]
+        },
+        {
+          "key": "action",
+          "label": "Did it take the appropriate action?",
+          "status": "FAIL",
+          "details": [
+            "net new units 0 outside expected [320, 440]",
+            "missing required action CREATE_PO",
+            "missing required action ESCALATE",
+            "should have escalated to the buyer"
+          ]
+        },
+        {
+          "key": "validation",
+          "label": "Did it validate the result?",
+          "status": "FAIL",
+          "details": [
+            "no plan was executed"
+          ]
+        },
+        {
+          "key": "recovery",
+          "label": "Did it handle a failed / blocked action?",
+          "status": "FAIL",
+          "details": [
+            "plan was blocked by guardrails; agent did not recover"
+          ]
+        },
+        {
+          "key": "explanation",
+          "label": "Did it explain the important factors?",
+          "status": "FAIL",
+          "details": [
+            "rationale never mentions any of: budget"
+          ]
+        }
+      ],
+      "metrics": {
+        "llmCalls": 4,
+        "toolCalls": 0,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "guardrailRejections": 1,
+        "replans": 0,
+        "durationMs": 3
+      }
+    },
+    {
+      "scenarioId": "s4-storage",
+      "runId": "run-mujw92jn-c",
+      "agent": "baseline:blind-executor",
+      "runStatus": "ESCALATED",
+      "finalDecision": "NONE",
+      "newUnits": 0,
+      "passed": false,
+      "score": 0.14,
+      "dimensions": [
+        {
+          "key": "decision",
+          "label": "Was the decision correct?",
+          "status": "FAIL",
+          "details": [
+            "final decision NONE; acceptable: MODIFY"
+          ]
+        },
+        {
+          "key": "information",
+          "label": "Did it obtain the necessary information?",
+          "status": "FAIL",
+          "details": [
+            "never checked current on-hand stock (get_inventory_position | calculate_requirement | simulate_plan)",
+            "never checked actual sales vs forecast (get_demand_signals)"
+          ]
+        },
+        {
+          "key": "constraints",
+          "label": "Did it respect constraints?",
+          "status": "PASS",
+          "details": [
+            "budget, storage, shelf life, MOQ/case and approval rules respected"
+          ]
+        },
+        {
+          "key": "action",
+          "label": "Did it take the appropriate action?",
+          "status": "FAIL",
+          "details": [
+            "net new units 0 outside expected [250, 800]",
+            "missing required action CREATE_PO",
+            "with TRUE demand (60/day) stock runs out on day 3 (need none through day 7)",
+            "system had to escalate because the agent could not finish"
+          ]
+        },
+        {
+          "key": "validation",
+          "label": "Did it validate the result?",
+          "status": "FAIL",
+          "details": [
+            "no plan was executed"
+          ]
+        },
+        {
+          "key": "recovery",
+          "label": "Did it handle a failed / blocked action?",
+          "status": "FAIL",
+          "details": [
+            "plan was blocked by guardrails; agent did not recover"
+          ]
+        },
+        {
+          "key": "explanation",
+          "label": "Did it explain the important factors?",
+          "status": "FAIL",
+          "details": [
+            "rationale never mentions any of: storage, capacity, freezer, space"
+          ]
+        }
+      ],
+      "metrics": {
+        "llmCalls": 4,
+        "toolCalls": 0,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "guardrailRejections": 1,
+        "replans": 0,
+        "durationMs": 0
+      }
+    }
+  ],
+  "summary": {
+    "scenarios": 12,
+    "runs": 12,
+    "passRate": 0,
+    "avgScore": 0.36,
+    "byDimension": {
+      "decision": {
+        "pass": 5,
+        "fail": 7,
+        "na": 0
+      },
+      "information": {
+        "pass": 0,
+        "fail": 12,
+        "na": 0
+      },
+      "constraints": {
+        "pass": 12,
+        "fail": 0,
+        "na": 0
+      },
+      "action": {
+        "pass": 3,
+        "fail": 9,
+        "na": 0
+      },
+      "validation": {
+        "pass": 6,
+        "fail": 6,
+        "na": 0
+      },
+      "recovery": {
+        "pass": 0,
+        "fail": 5,
+        "na": 7
+      },
+      "explanation": {
+        "pass": 1,
+        "fail": 11,
+        "na": 0
+      }
+    },
+    "byScenario": {
+      "s1-accept": {
+        "passes": 0,
+        "runs": 1
+      },
+      "s1-open-po": {
+        "passes": 0,
+        "runs": 1
+      },
+      "s1-reject": {
+        "passes": 0,
+        "runs": 1
+      },
+      "s1-forecast-anomaly": {
+        "passes": 0,
+        "runs": 1
+      },
+      "s2-alternate-supplier": {
+        "passes": 0,
+        "runs": 1
+      },
+      "s2-inventory-sufficient": {
+        "passes": 0,
+        "runs": 1
+      },
+      "s2-no-good-alternative": {
+        "passes": 0,
+        "runs": 1
+      },
+      "s2-feedback-loop": {
+        "passes": 0,
+        "runs": 1
+      },
+      "s3-sustained-spike": {
+        "passes": 0,
+        "runs": 1
+      },
+      "s3-promo-spike": {
+        "passes": 0,
+        "runs": 1
+      },
+      "s4-budget": {
+        "passes": 0,
+        "runs": 1
+      },
+      "s4-storage": {
+        "passes": 0,
+        "runs": 1
+      }
+    },
+    "avgLlmCalls": 2,
+    "avgToolCalls": 0,
+    "totalTokens": 0
+  }
+}
