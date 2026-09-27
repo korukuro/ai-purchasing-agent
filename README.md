@@ -33,7 +33,7 @@ Other commands:
 
 | Command | What it does |
 |---|---|
-| `npm test` | Unit tests: planning math, guardrails, verifier, orchestrator loops with a scripted LLM. No key needed |
+| `npm test` | 29 unit tests: planning math, guardrails, verifier, orchestrator loops with a scripted LLM, reference solutions for all 12 scenarios, and a Gemini client contract test. No key needed |
 | `npm run eval` | Runs the Gemini agent on all 12 scenarios and grades it. Writes `server/eval-results/latest-gemini.{json,md}` |
 | `npm run eval -- --scenario s2-feedback-loop --trials 3` | One scenario, repeated |
 | `npm run eval:baseline` | Grades the naive "blind executor" baseline. No key needed |
@@ -133,7 +133,7 @@ Every scenario has hand-derived ground truth (see the [worked numbers](docs/eval
 6. Did it handle a failed action?
 7. Did it explain the important factors?
 
-The naive baseline goes through the same pipeline and passes **0/12**, which shows the grader discriminates. It also separates what the guardrails guarantee (constraints hold for any agent) from what the agent has to supply (the right decision).
+Hand-written reference solutions pass **12/12** (so every scenario is solvable and the grader isn't too strict). The naive baseline goes through the same pipeline and passes **0/12**, which shows the grader discriminates. It also separates what the guardrails guarantee (constraints hold for any agent) from what the agent has to supply (the right decision).
 
 → Full details, including the limits of this approach: [docs/evaluation.md](docs/evaluation.md)
 

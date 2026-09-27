@@ -25,7 +25,7 @@ A purchasing decision has no single right number, but it has a **defensible rang
 | Necessary information? | every `requiredEvidence` group was called |
 | Constraints respected? | on the resulting state: budget ≤ limit, storage peak ≤ capacity (true demand), perishable cover, MOQ/case, no approval-required plan executed without approval |
 | Appropriate action? | net new units in range, required action types executed, escalation raised when needed, no stockout through the target day **at true demand**, no system-forced escalation |
-| Validated the result? | every executed plan was verified, the agent stated a verifiable expected outcome, and the run did not end on a failing verification without escalation |
+| Validated the result? | every executed plan was verified, the agent stated a verifiable expected outcome (`noStockoutThroughDay`, or `maxDaysOfCover` when a stockout is unavoidable), and the run did not end on a failing verification without escalation |
 | Handled failure? | if a plan was blocked or execution deviated: did it end verified or with an agent escalation? (N/A when nothing failed; FAIL if `expectReplan` but no failure happened) |
 | Explained factors? | key factors present and mention the scenario's decisive factor |
 
@@ -51,6 +51,13 @@ Policy: review period 7d, safety stock 3d, target window = lead time + 7d.
 | 4 | `s4-budget` | Correct need 1,060 units (₹4.77L) but only ₹2L budget left | buy ≤ 440 (fits budget, needs approval) + ESCALATE for budget |
 | 4 | `s4-storage` | Frozen zone has 400 units free for this SKU; rec 800 | ≤ 310 on first delivery, optional split delivery later |
 
+## Sanity checks on the evaluation itself
+
+An evaluation is only useful if it can tell good from bad, so it is checked from both ends:
+
+- **Reference solutions pass 12/12.** `server/test/reference-solutions.test.ts` plays a hand-written expert plan for every scenario through the real orchestrator. Every one must pass the grader, which shows each scenario is solvable within policy and the grader isn't stricter than a competent buyer.
+- **The naive baseline passes 0/12** (below).
+
 ## Baseline
 
 `npm run eval:baseline` runs a **naive blind executor** (accept the recommendation, accept the partial quantity, ignore demand alerts) through the same orchestrator, guardrails and grader. It passes **0 / 12** (see `server/eval-results/latest-baseline.md`). Two things are worth noticing in that report:
@@ -72,7 +79,7 @@ Reports are written to `server/eval-results/latest-<agent>.{json,md}` and shown 
 
 ## Two layers of testing
 
-1. **Unit tests (`server/test`)** — deterministic, no network. They pin the planning math, every guardrail, the verifier, and the orchestrator's control flow using a `ScriptedClient` (a fake LLM that plays a script): guardrail-block → corrected plan, buyer rejection → revised plan, supplier under-delivery → verification failure → follow-up plan, and bounded retries → system escalation.
+1. **Unit tests (`server/test`, 29 tests)** — deterministic, no network. They pin the planning math, every guardrail, the verifier, and the orchestrator's control flow using a `ScriptedClient` (a fake LLM that plays a script): guardrail-block → corrected plan, buyer rejection → revised plan, supplier under-delivery → verification failure → follow-up plan, and bounded retries → system escalation. They also include the 12 reference solutions and an offline contract test of the Gemini client (request format, preserved thought signatures, 429 retry).
 2. **Scenario evals (`npm run eval`)** — the real model on the 12 scenarios, graded against ground truth. LLMs are non-deterministic, so use `--trials N` and compare pass rates rather than single runs.
 
 ## Limits of this evaluation (honest notes)
