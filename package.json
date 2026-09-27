@@ -1,0 +1,25 @@
+{
+  "name": "ai-purchasing-agent",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Full-stack AI Purchasing Agent that reviews, decides, executes and validates purchasing actions for a quick-commerce buyer.",
+  "workspaces": [
+    "server",
+    "web"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n server,web -c blue,magenta \"npm run dev -w server\" \"npm run dev -w web\"",
+    "build": "npm run build -w web && npm run typecheck -w server",
+    "start": "npm run start -w server",
+    "test": "npm run test -w server",
+    "typecheck": "npm run typecheck -w server && npm run typecheck -w web",
+    "eval": "npm run eval -w server --",
+    "eval:baseline": "npm run eval -w server -- --agent baseline"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
