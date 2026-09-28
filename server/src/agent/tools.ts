@@ -52,6 +52,30 @@ function poView(world: World, id: string) {
 
 export const TOOLS: ToolDef[] = [
   {
+    name: "get_situation_overview",
+    description:
+      "START HERE. One call that returns the full picture for a SKU at a node: product master data, inventory position with all open POs, demand signals (sales vs forecast, outliers, promotions, notes), supplier options with reliability, category budget, open recommendations, supplier messages about this SKU's POs, and past decisions. Use the specific tools afterwards only to drill down, and the calculators for any numbers.",
+    parameters: obj({ sku: str("SKU"), nodeId: str("node id") }, ["sku", "nodeId"]),
+    readOnly: true,
+    handler: (a, env) => {
+      const { world } = env;
+      const call = (name: string, args: Record<string, unknown>) => TOOLS.find((t) => t.name === name)!.handler!(args, env);
+      const product = world.product(a.sku);
+      const poIds = new Set(world.state.purchaseOrders.filter((p) => p.sku === a.sku).map((p) => p.id));
+      return {
+        today: world.today,
+        product,
+        inventoryPosition: call("get_inventory_position", a),
+        demandSignals: call("get_demand_signals", a),
+        supplierOptions: call("get_supplier_options", { sku: a.sku }),
+        budget: call("get_budget", { category: product.category }),
+        openRecommendations: world.state.recommendations.filter((r) => r.sku === a.sku && r.nodeId === a.nodeId),
+        supplierMessages: world.state.supplierMessages.filter((m) => m.poId && poIds.has(m.poId)),
+        decisionHistory: world.state.decisionHistory.filter((d) => d.sku === a.sku),
+      };
+    },
+  },
+  {
     name: "get_recommendation",
     description: "Get a purchase recommendation produced by the replenishment system (quantity, supplier, rationale, how it was generated). The recommendation may be wrong or stale.",
     parameters: obj({ recommendationId: str("e.g. REC-1001") }, ["recommendationId"]),

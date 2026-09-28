@@ -13,7 +13,9 @@ export async function preflight(log: (m: string) => void = console.log): Promise
   }
   log(`• key loaded (${config.geminiApiKey.length} chars), model "${config.geminiModel}", client rate limit ${config.llmRpm} req/min`);
   try {
-    const turn = await new GeminiClient(config.geminiApiKey, config.geminiModel, 600).generate(
+    const client = new GeminiClient(config.geminiApiKey, config.geminiModels, 600);
+    client.onRetry = (m) => log(`  … ${m}`);
+    const turn = await client.generate(
       "You are a health check. Reply with the single word OK.",
       [{ role: "user", text: "ping" }],
       [],
@@ -21,7 +23,7 @@ export async function preflight(log: (m: string) => void = console.log): Promise
     log(`✔ Gemini responded: "${turn.text.slice(0, 40)}"`);
     return true;
   } catch (err) {
-    log(`✘ Gemini call failed: ${explainLLMError(err, config.geminiModel) ?? String((err as Error)?.message ?? err)}`);
+    log(`✘ Gemini call failed: ${explainLLMError(err, config.geminiModels[0]) ?? String((err as Error)?.message ?? err)}`);
     try {
       const models = (await listGenerateModels()).filter((m) => /flash|pro/.test(m) && !/tts|image|live|audio|embed/.test(m));
       if (models.length) log(`  Models this key can use (set GEMINI_MODEL in .env to one of them):\n   - ${models.join("\n   - ")}`);

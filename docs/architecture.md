@@ -65,7 +65,7 @@ stateDiagram-v2
 
 | Stage | Who | What happens |
 |---|---|---|
-| Investigate | LLM + tools | ReAct loop over 13 read-only tools. Numbers come from calculators (`calculate_requirement`, `simulate_plan`), never from the model's head. |
+| Investigate | LLM + tools | ReAct loop over 14 read-only tools, starting with `get_situation_overview` (the whole picture in one call, to keep LLM turns and free-tier quota low). Numbers come from calculators (`calculate_requirement`, `simulate_plan`), never from the model's head. |
 | Decide | LLM | One structured `Plan` via `submit_plan`: decision, key factors with evidence, demand assumption, actions, **expected outcome**. |
 | Guardrails | `domain/policy.ts` | Budget, MOQ/case size, supplier capacity, lead time, storage peak, shelf life, overstock, plan self-consistency. Each finding is `BLOCK`, `APPROVAL` or `INFO`. |
 | Approval gate | Human (or eval auto-approver) | Only for high-impact actions: PO value > ₹1.5L, cancellations, low-reliability suppliers, upsizing > 25% over recommendation, overstock. |

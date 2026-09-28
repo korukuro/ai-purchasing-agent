@@ -70,6 +70,8 @@ A buyer's decision comes down to four questions. The data and tools were designe
 | What can we buy, from whom? | MOQ, case size, lead time, price, catalogue availability, **reliability history** | `get_supplier_options`, `get_supplier_messages` |
 | What are we allowed to do? | budget, storage by zone, shelf life, approval limits, SOP | `get_budget`, `get_product`, `search_buying_policy` |
 
+`get_situation_overview` bundles all of the above into one call. Most scenarios then need only 3–5 LLM turns, which matters on a free-tier quota. The specific tools remain available for drilling down.
+
 Two calculators do the arithmetic, so the LLM never computes quantities in its head:
 
 - `calculate_requirement`: order-up-to need = demand over (lead time + review period) + safety stock − on hand − inbound, rounded to case size and MOQ. It accepts a demand override, so the agent can plan on the recent run-rate instead of a stale forecast.
@@ -166,8 +168,8 @@ docs/              architecture.md, evaluation.md
 | Variable | Default | Notes |
 |---|---|---|
 | `GEMINI_API_KEY` | none | required for the AI agent |
-| `GEMINI_MODEL` | `gemini-flash-latest` | pin a specific model id for reproducible evals |
-| `LLM_RPM` | `10` | client-side rate limit to stay inside the free tier; 429s are retried with backoff |
+| `GEMINI_MODEL` | `gemini-flash-latest,gemini-flash-lite-latest` | one model or a comma-separated fallback chain; when a model's free-tier **daily** quota runs out the client switches to the next one |
+| `LLM_RPM` | `5` | client-side rate limit shared by all runs, to stay inside the free tier; per-minute 429s are retried with the server's suggested delay |
 | `PORT` | `8787` | API port (Vite proxies `/api`) |
 | `AGENT_MAX_LLM_STEPS` / `AGENT_MAX_REPLANS` / `AGENT_MAX_GUARDRAIL_REJECTIONS` | 30 / 2 / 3 | loop budgets |
 

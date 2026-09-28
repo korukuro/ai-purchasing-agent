@@ -51,6 +51,13 @@ class RateLimiter {
   }
 }
 
+// One limiter per RPM value, shared by every client in the process (the quota is per key, not per run).
+const limiters = new Map<number, RateLimiter>();
+const sharedLimiter = (rpm: number) => limiters.get(rpm) ?? limiters.set(rpm, new RateLimiter(rpm)).get(rpm)!;
+
+// Models whose free-tier DAILY quota is used up in this process; every client skips them.
+const exhaustedModels = new Set<string>();
+
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 /** Thrown when retrying cannot help (bad key, unknown model, daily quota used up). */
@@ -93,11 +100,22 @@ export class GeminiClient implements LLMClient {
   /** Optional hook so the CLI can show that we're waiting on rate limits instead of looking frozen. */
   onRetry?: (msg: string) => void;
 
-  constructor(apiKey = config.geminiApiKey, private model = config.geminiModel, rpm = config.llmRpm) {
+  private models: string[];
+
+  /**
+   * @param models one model id or a fallback chain (e.g. "gemini-flash-latest,gemini-flash-lite-latest").
+   *               When a model's daily free-tier quota runs out, the client moves to the next one.
+   */
+  constructor(apiKey = config.geminiApiKey, models: string | string[] = config.geminiModels, rpm = config.llmRpm) {
     if (!apiKey) throw new Error("GEMINI_API_KEY is not set. Copy .env.example to .env and add your key.");
     this.ai = new GoogleGenAI({ apiKey });
-    this.limiter = new RateLimiter(rpm);
-    this.name = `gemini:${model}`;
+    this.models = (Array.isArray(models) ? models : models.split(",")).map((m) => m.trim()).filter(Boolean);
+    this.limiter = sharedLimiter(rpm);
+    this.name = `gemini:${this.models[0]}`;
+  }
+
+  private get model(): string {
+    return this.models.find((m) => !exhaustedModels.has(m)) ?? this.models[this.models.length - 1];
   }
 
   private toContents(history: Message[]): Content[] {
@@ -105,7 +123,15 @@ export class GeminiClient implements LLMClient {
       if (m.role === "user") return { role: "user", parts: [{ text: m.text }] };
       if (m.role === "model") {
         // Send the model's own content back verbatim: this preserves thought signatures.
-        if (m.raw) return m.raw as Content;
+        const raw = m.raw as (Content & { producedBy?: string }) | undefined;
+        if (raw && raw.producedBy === this.model) return { role: "model", parts: raw.parts };
+        if (raw) {
+          // Produced by a different model (we fell back mid-run): its thought signatures are not valid here.
+          const parts = (raw.parts ?? [])
+            .filter((p) => !p.thought)
+            .map((p) => (p.functionCall ? { functionCall: p.functionCall, thoughtSignature: "skip_thought_signature_validator" } : { text: p.text }));
+          return { role: "model", parts };
+        }
         const parts: Part[] = [];
         if (m.text) parts.push({ text: m.text });
         for (const c of m.calls) parts.push({ functionCall: { id: c.id, name: c.name, args: c.args } });
@@ -121,12 +147,13 @@ export class GeminiClient implements LLMClient {
   }
 
   async generate(system: string, history: Message[], tools: ToolSpec[]): Promise<LLMTurn> {
-    const contents = this.toContents(history);
     for (let attempt = 0; ; attempt++) {
+      const model = this.model;
+      const contents = this.toContents(history);
       await this.limiter.wait();
       try {
         const res = await this.ai.models.generateContent({
-          model: this.model,
+          model,
           contents,
           config: {
             systemInstruction: system,
@@ -158,16 +185,26 @@ export class GeminiClient implements LLMClient {
         return {
           text,
           calls,
-          raw: content ? { role: "model", parts } : undefined,
+          raw: content ? { role: "model", parts, producedBy: model } : undefined,
           usage: {
             inputTokens: res.usageMetadata?.promptTokenCount ?? 0,
             outputTokens: (res.usageMetadata?.candidatesTokenCount ?? 0) + (res.usageMetadata?.thoughtsTokenCount ?? 0),
           },
         };
       } catch (err) {
+        const msg = String((err as Error)?.message ?? err);
+        if (/PerDay|per day/i.test(msg) && !exhaustedModels.has(model)) {
+          exhaustedModels.add(model);
+          const next = this.models.find((m) => !exhaustedModels.has(m));
+          if (next) {
+            this.onRetry?.(`daily quota for ${model} is used up — switching to ${next}`);
+            attempt = -1;
+            continue;
+          }
+        }
         const delay = retryDelayMs(err, attempt);
-        if (delay === null || attempt >= 5) {
-          const explained = explainLLMError(err, this.model);
+        if (delay === null || attempt >= 8) {
+          const explained = explainLLMError(err, model);
           if (explained) throw new FatalLLMError(explained);
           throw err;
         }

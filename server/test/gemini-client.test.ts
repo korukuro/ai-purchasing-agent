@@ -77,4 +77,25 @@ describe("GeminiClient", () => {
     expect(turn.text).toBe("ok");
     expect(n).toBe(2);
   });
+
+  it("falls back to the next model when the daily quota is exhausted", async () => {
+    const urls: string[] = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) => {
+        urls.push(String(url));
+        if (String(url).includes("primary-model")) {
+          return new Response(JSON.stringify({ error: { code: 429, message: "Quota exceeded for quota metric GenerateRequestsPerDayPerProjectPerModel-FreeTier", status: "RESOURCE_EXHAUSTED" } }), { status: 429, headers: { "content-type": "application/json" } });
+        }
+        return new Response(JSON.stringify({ candidates: [{ content: { role: "model", parts: [{ text: "from fallback" }] } }] }), { status: 200, headers: { "content-type": "application/json" } });
+      }),
+    );
+    const client = new GeminiClient("k", "primary-model,fallback-model", 60_000);
+    const notes: string[] = [];
+    client.onRetry = (m) => notes.push(m);
+    const turn = await client.generate("s", [{ role: "user", text: "hi" }], []);
+    expect(turn.text).toBe("from fallback");
+    expect(urls.some((u) => u.includes("fallback-model"))).toBe(true);
+    expect(notes[0]).toMatch(/switching to fallback-model/);
+  });
 });

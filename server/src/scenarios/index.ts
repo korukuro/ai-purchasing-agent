@@ -9,13 +9,15 @@ import type { Scenario } from "./types.js";
 const N = NODE.id;
 const H = 28; // days of sales history
 
+// get_situation_overview returns all of these in one call, so it satisfies every group.
+const OV = "get_situation_overview";
 const EVIDENCE = {
-  stock: { anyOf: ["get_inventory_position", "calculate_requirement", "simulate_plan"], why: "current on-hand stock" },
-  openPOs: { anyOf: ["get_open_purchase_orders", "get_inventory_position"], why: "existing open purchase orders" },
-  demand: { anyOf: ["get_demand_signals"], why: "actual sales vs forecast" },
-  suppliers: { anyOf: ["get_supplier_options"], why: "supplier MOQ / lead time / alternates" },
-  budget: { anyOf: ["get_budget"], why: "remaining purchasing budget" },
-  supplierMsg: { anyOf: ["get_supplier_messages", "get_purchase_order"], why: "what the supplier actually said" },
+  stock: { anyOf: [OV, "get_inventory_position", "calculate_requirement", "simulate_plan"], why: "current on-hand stock" },
+  openPOs: { anyOf: [OV, "get_open_purchase_orders", "get_inventory_position"], why: "existing open purchase orders" },
+  demand: { anyOf: [OV, "get_demand_signals"], why: "actual sales vs forecast" },
+  suppliers: { anyOf: [OV, "get_supplier_options"], why: "supplier MOQ / lead time / alternates" },
+  budget: { anyOf: [OV, "get_budget"], why: "remaining purchasing budget" },
+  supplierMsg: { anyOf: [OV, "get_supplier_messages", "get_purchase_order"], why: "what the supplier actually said" },
 };
 
 function product(p: Partial<Product> & Pick<Product, "sku" | "name" | "category" | "unitCost">): Product {
