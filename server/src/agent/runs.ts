@@ -77,7 +77,8 @@ export class RunStore {
   private approvals = new Map<string, (d: ApprovalDecision) => void>();
   private seq = 1;
 
-  constructor() {
+  /** @param onAnyEvent optional listener for every event of every run (used by the eval CLI for live progress) */
+  constructor(private onAnyEvent?: (run: Run, ev: RunEvent) => void) {
     this.bus.setMaxListeners(100);
   }
 
@@ -110,6 +111,7 @@ export class RunStore {
     const ev: RunEvent = { seq: run.events.length + 1, ts: Date.now(), type, title, data };
     run.events.push(ev);
     this.bus.emit(run.id, ev);
+    this.onAnyEvent?.(run, ev);
   }
 
   update(run: Run) {

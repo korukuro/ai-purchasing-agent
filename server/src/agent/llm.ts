@@ -53,8 +53,27 @@ class RateLimiter {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+/** Thrown when retrying cannot help (bad key, unknown model, daily quota used up). */
+export class FatalLLMError extends Error {}
+
+/** Turn raw API errors into something a human can act on. */
+export function explainLLMError(err: unknown, model: string): string | null {
+  if (err instanceof FatalLLMError) return err.message;
+  const msg = String((err as Error)?.message ?? err);
+  if (/allowlist|ENOTFOUND|ECONNREFUSED|ETIMEDOUT|fetch failed|getaddrinfo|network/i.test(msg))
+    return `Could not reach generativelanguage.googleapis.com (${msg.slice(0, 160)}). Check your internet connection, VPN, proxy or firewall.`;
+  if (/API key not valid|API_KEY_INVALID|PERMISSION_DENIED|unauthenticated|401|403/i.test(msg))
+    return `Gemini rejected the API key (${msg.slice(0, 160)}). Check GEMINI_API_KEY in .env (create one at https://aistudio.google.com/apikey).`;
+  if (/not found|404|is not supported for generateContent/i.test(msg))
+    return `Model "${model}" is not available for this key (${msg.slice(0, 160)}). Set GEMINI_MODEL in .env to one of the models listed by "npm run check-llm".`;
+  if (/PerDay|per day|daily/i.test(msg))
+    return `The free-tier DAILY quota for "${model}" is used up (resets at midnight Pacific). Try another model via GEMINI_MODEL (e.g. a flash-lite model), or run fewer scenarios with --scenario.`;
+  return null;
+}
+
 function retryDelayMs(err: unknown, attempt: number): number | null {
   const msg = String((err as Error)?.message ?? err);
+  if (/PerDay|per day/i.test(msg)) return null; // daily quota: waiting a few seconds won't help
   const status = (err as { status?: number })?.status;
   const retryable = status === 429 || status === 500 || status === 503 || /429|RESOURCE_EXHAUSTED|UNAVAILABLE|overloaded|ECONNRESET|fetch failed/i.test(msg);
   if (!retryable) return null;
@@ -71,6 +90,8 @@ export class GeminiClient implements LLMClient {
   readonly name: string;
   private ai: GoogleGenAI;
   private limiter: RateLimiter;
+  /** Optional hook so the CLI can show that we're waiting on rate limits instead of looking frozen. */
+  onRetry?: (msg: string) => void;
 
   constructor(apiKey = config.geminiApiKey, private model = config.geminiModel, rpm = config.llmRpm) {
     if (!apiKey) throw new Error("GEMINI_API_KEY is not set. Copy .env.example to .env and add your key.");
@@ -109,15 +130,17 @@ export class GeminiClient implements LLMClient {
           contents,
           config: {
             systemInstruction: system,
-            tools: [
-              {
-                functionDeclarations: tools.map((t) => ({
-                  name: t.name,
-                  description: t.description,
-                  parametersJsonSchema: t.parameters,
-                })),
-              },
-            ],
+            tools: tools.length
+              ? [
+                  {
+                    functionDeclarations: tools.map((t) => ({
+                      name: t.name,
+                      description: t.description,
+                      parametersJsonSchema: t.parameters,
+                    })),
+                  },
+                ]
+              : undefined,
           },
         });
         const content = res.candidates?.[0]?.content;
@@ -143,7 +166,12 @@ export class GeminiClient implements LLMClient {
         };
       } catch (err) {
         const delay = retryDelayMs(err, attempt);
-        if (delay === null || attempt >= 5) throw err;
+        if (delay === null || attempt >= 5) {
+          const explained = explainLLMError(err, this.model);
+          if (explained) throw new FatalLLMError(explained);
+          throw err;
+        }
+        this.onRetry?.(`LLM call failed (${String((err as Error)?.message ?? err).slice(0, 120)}), retrying in ${Math.round(delay / 1000)}s`);
         await sleep(delay);
       }
     }
@@ -168,4 +196,16 @@ export class ScriptedClient implements LLMClient {
     if (!step) return { text: "script exhausted", calls: [] };
     return step(history);
   }
+}
+
+/** List models this key can call generateContent on (used by the preflight check). */
+export async function listGenerateModels(apiKey = config.geminiApiKey): Promise<string[]> {
+  const ai = new GoogleGenAI({ apiKey });
+  const out: string[] = [];
+  const pager = await ai.models.list();
+  for await (const m of pager) {
+    const actions = (m as { supportedActions?: string[] }).supportedActions ?? [];
+    if (!actions.length || actions.includes("generateContent")) out.push(String(m.name).replace(/^models\//, ""));
+  }
+  return out;
 }

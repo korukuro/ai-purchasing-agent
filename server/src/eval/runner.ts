@@ -42,6 +42,8 @@ export async function runEval(opts: {
   trials?: number;
   store?: RunStore;
   onProgress?: (msg: string, grade?: Grade) => void;
+  /** called with the partial report after every run, so an interrupted eval still leaves results */
+  onPartial?: (r: EvalReport) => void;
 }): Promise<EvalReport> {
   const store = opts.store ?? new RunStore();
   const trials = opts.trials ?? 1;
@@ -49,16 +51,28 @@ export async function runEval(opts: {
   const startedAt = new Date().toISOString();
   const grades: Grade[] = [];
 
-  for (const s of scenarios) {
+  let aborted: string | null = null;
+  outer: for (const s of scenarios) {
     for (let t = 0; t < trials; t++) {
       opts.onProgress?.(`▶ ${s.id} (trial ${t + 1}/${trials})`);
-      const run = await runAgent(s, makeClient(opts.agent, s), store, autoApprover);
+      const client = makeClient(opts.agent, s);
+      if (client instanceof GeminiClient) client.onRetry = (m) => opts.onProgress?.(`   … ${m}`);
+      const run = await runAgent(s, client, store, autoApprover);
       const g = gradeRun(s, run);
       grades.push(g);
-      opts.onProgress?.(`${g.passed ? "✔" : "✘"} ${s.id}: ${g.finalDecision}, score ${g.score}`, g);
+      opts.onProgress?.(`${g.passed ? "✔" : "✘"} ${s.id}: ${run.status}, decision ${g.finalDecision}, score ${g.score}${run.error ? `\n   error: ${run.error}` : ""}`, g);
+      opts.onPartial?.(summarise(opts.agent, startedAt, trials, grades, scenarios.length));
+      if (run.error && /DAILY quota|rejected the API key|not available for this key/.test(run.error)) {
+        aborted = run.error;
+        break outer; // every remaining scenario would fail the same way
+      }
     }
   }
+  if (aborted) opts.onProgress?.(`\nStopped early: ${aborted}`);
+  return summarise(opts.agent, startedAt, trials, grades, scenarios.length);
+}
 
+function summarise(agentKind: AgentKind, startedAt: string, trials: number, grades: Grade[], nScenarios: number): EvalReport {
   const byDimension: EvalReport["summary"]["byDimension"] = {};
   const byScenario: EvalReport["summary"]["byScenario"] = {};
   for (const g of grades) {
@@ -73,13 +87,13 @@ export async function runEval(opts: {
   const avg = (f: (g: Grade) => number) => Math.round((10 * grades.reduce((s, g) => s + f(g), 0)) / Math.max(1, grades.length)) / 10;
 
   return {
-    agent: grades[0]?.agent ?? opts.agent,
+    agent: grades[0]?.agent ?? agentKind,
     startedAt,
     finishedAt: new Date().toISOString(),
     trials,
     grades,
     summary: {
-      scenarios: scenarios.length,
+      scenarios: nScenarios,
       runs: grades.length,
       passRate: Math.round((100 * grades.filter((g) => g.passed).length) / Math.max(1, grades.length)) / 100,
       avgScore: Math.round((100 * grades.reduce((s, g) => s + g.score, 0)) / Math.max(1, grades.length)) / 100,

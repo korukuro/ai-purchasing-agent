@@ -24,6 +24,7 @@ Requirements: Node.js ≥ 20 and a free Gemini API key from https://aistudio.goo
 git clone <this repo> && cd ai-purchasing-agent
 npm install
 cp .env.example .env          # then set GEMINI_API_KEY=...
+npm run check-llm             # one tiny request: verifies key, model and quota
 npm run dev                   # API on :8787, dashboard on http://localhost:5173
 ```
 
@@ -34,7 +35,8 @@ Other commands:
 | Command | What it does |
 |---|---|
 | `npm test` | 29 unit tests: planning math, guardrails, verifier, orchestrator loops with a scripted LLM, reference solutions for all 12 scenarios, and a Gemini client contract test. No key needed |
-| `npm run eval` | Runs the Gemini agent on all 12 scenarios and grades it. Writes `server/eval-results/latest-gemini.{json,md}` |
+| `npm run check-llm` | Verifies the Gemini key/model with one request; on failure explains why and lists the models your key can use |
+| `npm run eval` | Runs the Gemini agent on all 12 scenarios and grades it (free tier: ~15–25 min, live progress in the terminal). Saves `server/eval-results/latest-gemini.{json,md}` after every scenario |
 | `npm run eval -- --scenario s2-feedback-loop --trials 3` | One scenario, repeated |
 | `npm run eval:baseline` | Grades the naive "blind executor" baseline. No key needed |
 | `npm run build && npm start` | Production build; the API also serves the dashboard on :8787 |
